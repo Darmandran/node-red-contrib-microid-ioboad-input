@@ -19,7 +19,7 @@ module.exports = function(RED) {
         	var board = node.board;
             var input = node.input;
         	var MAC = node.MAC;
-
+            
             if(msg.payload.MAC !== MAC && msg.payload.device !== board) return;
 
             const {device,temp,status} = msg.payload
