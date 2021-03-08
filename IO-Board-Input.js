@@ -1,11 +1,11 @@
 
-var relayState = {
-    RLY1:"",RLY2:"",RLY3:"",RLY4:"",RLY5:""
-};
+
 
 module.exports = function(RED) {
-
     function IoBoardNode(config) {
+        var relayState = {
+            RLY1:"",RLY2:"",RLY3:"",RLY4:"",RLY5:""
+        };
         RED.nodes.createNode(this,config);
         this.board = config.board;
         this.MAC = config.MAC;
@@ -14,7 +14,7 @@ module.exports = function(RED) {
 
         var node = this;
         this.on('input', function(msg) {
-            
+
         	var state = node.state;
         	var board = node.board;
             var input = node.input;
@@ -24,13 +24,14 @@ module.exports = function(RED) {
             
             const {device,temp,status} = msg.payload
             if(msg.serverType === "listening"){
+                
                 if(state=="BUTTON"){
                     if((input==="any" && msg.payload.deviceShadow.buttonTrigger!=0)|| input == msg.payload.deviceShadow.buttonTrigger){
                         if(msg.payload.hasOwnProperty("deviceShadow.buttonState")){
                             msg.payload.deviceShadow.buttonState = msg.payload.deviceShadow.buttonState==="high"? "high":"low"
                         }
                     }else{
-                        return
+                        return;
                     }  
                 }else{
                     if(input==="any"){
@@ -40,7 +41,10 @@ module.exports = function(RED) {
                                 relayState["RLY"+i] = msg.payload.deviceShadow.relayState["RLY"+i]
                                 breakIsTrue = true;
                             }
+                            
                         }
+                        
+                        // console.log(msg.payload.deviceShadow.relayState)
                         if(!breakIsTrue){return;}
 
                     }else if(relayState["RLY"+input] !== msg.payload.deviceShadow.relayState["RLY"+input]){
